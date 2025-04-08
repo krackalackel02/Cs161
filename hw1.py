@@ -28,3 +28,43 @@ def TREE_ORDER(tree):
             return (tree,)
     left, middle, right = tree
     return TREE_ORDER(left) + TREE_ORDER(right) + (middle,)
+
+
+# Question 1: PAD
+print("PAD tests")
+print(PAD(5))  # 3
+print(PAD(3))  # 2
+print(PAD(4))  # 2
+print()
+
+# Question 2: SUMS
+print("SUMS tests")
+print(SUMS(5))  # 3
+print(SUMS(3))  # 1
+print(SUMS(4))  # 2
+print()
+
+# Question 3: ANON
+print("ANON tests")
+print(ANON(42))  # '?'
+print(ANON("FOO"))  # '?'
+print(ANON((("L", "E"), "F", "T")))  # ((‘?’, ‘?’), ‘?’, ‘?’)
+print(ANON((5, "FOO", 3.1, -0.2)))  # (‘?’, ‘?’, ‘?’, ‘?’)
+print(ANON((1, ("FOO", 3.1), -0.2)))  # (‘?’, (‘?’, ‘?’), ‘?’)
+print(ANON(((1, 2), ("FOO", 3.1), ("BAR", -0.2))))  # ((‘?’, ‘?’), (‘?’, ‘?’), (‘?’, ‘?’))
+print(ANON(("R", ("I", ("G", ("H", "T"))))))  # (‘?’, (‘?’, (‘?’, (‘?’, ‘?’))))
+print()
+
+# Question 4: TREE_HEIGHT
+print("TREE_HEIGHT tests")
+print(TREE_HEIGHT(1))  # 0
+print(TREE_HEIGHT((5, "FOO", 3.1, -0.2)))  # 1
+print(TREE_HEIGHT((1, ("FOO", 3.1), -0.2)))  # 2
+print(TREE_HEIGHT(("R", ("I", ("G", ("H", "T"))))))  # 4
+print()
+
+# Question 5: TREE_ORDER
+print("TREE_ORDER tests")
+print(TREE_ORDER(42))  # (42,)
+print(TREE_ORDER(((1, 2, 3), 7, 8)))  # (1, 3, 2, 8, 7)
+print(TREE_ORDER(((3, 7, 10), 15, ((16, 18, 20), 30, 100))))  # (3, 10, 7, 16, 20, 18, 100, 30, 15)
