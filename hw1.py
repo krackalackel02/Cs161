@@ -1,5 +1,23 @@
+# hw1.py
+# Author: Paul Kallarackel
+# Collaborators:
+# This file implements five functions:
+#   1. PAD(n): Computes the n-th number in the Padovan sequence.
+#   2. SUMS(n): Computes the number of additions made when computing PAD(n).
+#   3. ANON(tree): Replaces all leaves of a tree structure with '?'.
+#   4. TREE_HEIGHT(tree): Computes the height of a tree.
+#   5. TREE_ORDER(tree): Computes the postorder traversal of a tree.
+
+
 # Question 1 - Padovan Sequence
 def PAD(n):
+    """
+    Returns the n-th number in the Padovan sequence.
+    Arguments:
+        n (int): The index in the Padovan sequence.
+    Returns:
+        int: The value of the n-th Padovan number.
+    """
     # Base case: if n is 0, 1, or 2, return 1
     if n == 0 or n == 1 or n == 2:
             return 1
@@ -17,6 +35,13 @@ print()
 
 # Question 2 - Count number of additions in PAD
 def SUMS(n):
+    """
+    Returns the number of additions performed to compute PAD(n).
+    Arguments:
+        n (int): The index in the Padovan sequence.
+    Returns:
+        int: The number of additions used in recursive PAD.
+    """
     # Base case: if n is 0, 1, or 2, return 0
     # (no additions needed for these cases)
     if n == 0 or n == 1 or n == 2:
@@ -35,6 +60,13 @@ print()
 
 # Question 3 - Anonymize leaves in tree
 def ANON(tree):
+    """
+    Replaces all leaves in the tree with '?'.
+    Arguments:
+        tree: A nested tuple structure representing a tree.
+    Returns:
+        A tree with the same structure, but all leaves replaced by '?'.
+    """
     # Base case: if the tree is not a tuple, return '?'
     if not isinstance(tree, tuple):
             return "?"
@@ -55,6 +87,13 @@ print()
 
 # Question 4 - Compute tree height
 def TREE_HEIGHT(tree):
+    """
+    Computes the height of the tree.
+    Arguments:
+        tree: A nested tuple representing a tree.
+    Returns:
+        int: Height of the tree (0 for leaf nodes).
+    """
     # Base case: if the tree is not a tuple, return 0
     # (height of a leaf is 0)
     if not isinstance(tree, tuple):
@@ -73,6 +112,13 @@ print()
 
 # Question 5 - Postorder traversal of ordered tree
 def TREE_ORDER(tree):
+    """
+    Computes the postorder traversal of a tree.
+    Arguments:
+        tree: A nested tuple representing a tree.
+    Returns:
+        tuple: Postorder traversal of the tree as a flat tuple.
+    """
     # Base case: if the tree is not a tuple, return a tuple with the tree itself
     # (this is a leaf node)
     if not isinstance(tree, tuple):
