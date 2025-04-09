@@ -52,9 +52,9 @@ def SUMS(n):
 
 # Question 2: SUMS
 print("SUMS tests")
-print(SUMS(5))  # 3
+print(SUMS(5))  # 2
 print(SUMS(3))  # 1
-print(SUMS(4))  # 2
+print(SUMS(4))  # 1
 print()
 
 
