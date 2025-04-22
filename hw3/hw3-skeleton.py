@@ -128,7 +128,11 @@ def cleanUpList(s_list):
 # (no box is on a non-goal square)
 # Remember, the number of goal can be larger than the number of box.
 def goal_test(s):
-    raise NotImplementedError()
+    for row in s:
+        for val in row:
+            if val == box:  # box not on goal
+                return False
+    return True
 
 
 # EXERCISE: Modify this function to return the list of
