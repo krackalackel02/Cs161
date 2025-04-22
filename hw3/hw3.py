@@ -206,23 +206,60 @@ def next_states(s):
 # EXERCISE: Modify this function to compute the trivial
 # admissible heuristic.
 def h0(s):
-    raise NotImplementedError()
+    return 0
 
 # EXERCISE: Modify this function to compute the
 # number of misplaced boxes in state s (numpy array).
 def h1(s):
-    raise NotImplementedError()
+    misplaced = 0
+    for row in s:
+        for val in row:
+            if val == box:
+                misplaced += 1
+    return misplaced
 
 # EXERCISE: Is this heuristic admissible? Return true if yes, false if no. Explain your reasoning
 # as comments in this function.
 def h1_admissible():
-    raise NotImplementedError()
+    # This heuristic counts the number of boxes not on goals.
+    # It does not overestimate the number of steps required to reach the goal,
+    # because each misplaced box must be moved at least once.
+    # It ignores path complexity and distances, so it is a lower bound.
+    return True
 
 # EXERCISE: 
 # This function will be tested in various hard examples.
 # Objective: make A* solve problems as fast as possible.
 def h2(s):
-    raise NotImplementedError()
+    boxes = []
+    goals = []
+
+    for r in range(s.shape[0]):
+        for c in range(s.shape[1]):
+            if isBox(s[r, c]) or isBoxstar(s[r, c]):
+                boxes.append((r, c))
+            if isStar(s[r, c]) or isBoxstar(s[r, c]) or isKeeperstar(s[r, c]):
+                goals.append((r, c))
+
+    total_distance = 0
+    used_goals = set()
+
+    for box in boxes:
+        min_dist = float('inf')
+        closest_goal = None
+        for goal in goals:
+            if goal in used_goals:
+                continue
+            dist = abs(box[0] - goal[0]) + abs(box[1] - goal[1])
+            if dist < min_dist:
+                min_dist = dist
+                closest_goal = goal
+        if closest_goal:
+            used_goals.add(closest_goal)
+            total_distance += min_dist
+
+    return total_distance
+
 
 
 # Some predefined problems with initial state s (array). Sokoban function will automatically transform it to numpy
@@ -489,13 +526,66 @@ def printlists(lists):
     for states in (lists):
         printstate(states)
         print('\n')
+def myprintstate(s):
+    symbol_map = {
+        blank: '  ',
+        wall: '██',
+        box: '▣▣',
+        keeper: '⛹⛹',
+        star: '△△',
+        boxstar: '◆◆',
+        keeperstar: '🔷🔷'
+    }
+
+    row, col = s.shape
+    top_border = '┌' + '──' * col + '┐'
+    bottom_border = '└' + '──' * col + '┘'
+    print(top_border)
+    for i in range(row):
+        print('│', end='')
+        for j in range(col):
+            print(symbol_map.get(s[i, j], '??'), end='')
+        print('│')
+    print(bottom_border)
 
 
+import time
+
+#...
 if __name__ == "__main__":
-    sokoban(s1, h0)
+    ss = (
+        (1, s1, True),
+        (2, s2, True),
+        (3, s3, True),
+        (4, s4, True),
+        (5, s5, True),
+        (6, s6, True),
+        (7, s7, True),
+        (8, s8, True),
+        (9, s9, True),
+        (10, s10, True),
+        (11, s11, True),
+        (12, s12, True),
+        (13, s13, True),
+        (14, s14, True),
+        (15, s15, True),
+        (16, s16, True),
+        (17, s17, False),
+        (18, s18, True),
+        (19, s19, True),
+        # (16, s16, True),
+    )
+    total_time = 0
+    for i, s, d in ss:
+        print(f"Test {i}{'' if d else ' (skipped)'}")
+        state = np.array(s)
+        myprintstate(state)
+        if d:
+            start_time = time.time()
+            sokoban(state, h0)
+            end_time = time.time()
+            total_time += end_time - start_time
+            print(f"Execution Time: {end_time - start_time:.4f} seconds")
+            print()
 
-    sokoban(s2, h0)
-
-    sokoban(s3, h0)
-
-    sokoban(s4, h0)
+    print(f"Total Time: {total_time:.4f} seconds")
