@@ -134,6 +134,45 @@ def goal_test(s):
                 return False
     return True
 
+def get_square(s, r, c):
+    if 0 <= r < s.shape[0] and 0 <= c < s.shape[1]:
+        return s[r, c]
+    return wall
+def set_square(s, r, c, v):
+    s_copy = np.copy(s)
+    s_copy[r, c] = v
+    return s_copy
+def try_move(s, dr, dc):
+    r, c = getKeeperPosition(s)
+    r1, c1 = r + dr, c + dc
+    r2, c2 = r1 + dr, c1 + dc
+
+    from_val = s[r, c]
+    to_val = get_square(s, r1, c1)
+    beyond_val = get_square(s, r2, c2)
+
+    if isWall(to_val):
+        return None
+
+    s1 = np.copy(s)
+
+    # Move into box?
+    if isBox(to_val) or isBoxstar(to_val):
+        if not (isBlank(beyond_val) or isStar(beyond_val)):
+            return None
+        s1 = set_square(s1, r2, c2, boxstar if isStar(beyond_val) else box)
+
+    # Update previous keeper position
+    s1 = set_square(s1, r, c, star if isKeeperstar(from_val) else blank)
+
+    # Clear box position if we pushed it
+    if isBox(to_val) or isBoxstar(to_val):
+        s1 = set_square(s1, r1, c1, star if isBoxstar(to_val) else blank)
+
+    # Set keeper's new position
+    s1 = set_square(s1, r1, c1, keeperstar if isStar(to_val) else keeper)
+
+    return s1
 
 # EXERCISE: Modify this function to return the list of
 # successor states of s (numpy array).
@@ -153,13 +192,15 @@ def goal_test(s):
 # into it to the objects found in the original. In this case, any change in the numpy array s1 will also affect
 # the original array s. Thus, you may need a deep copy (e.g, s1 = np.copy(s)) to construct an indepedent array.
 def next_states(s):
-    row, col = getKeeperPosition(s)
-    s_list = []
-    s1 = np.copy(s)
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
+    result = []
 
-    # NOT IMPLEMENTED YET! YOU NEED TO FINISH THIS FUNCTION.
+    for dr, dc in directions:
+        new_state = try_move(s, dr, dc)
+        result.append(new_state)
 
-    return cleanUpList(s_list)
+    return cleanUpList(result)
+
 
 
 # EXERCISE: Modify this function to compute the trivial
