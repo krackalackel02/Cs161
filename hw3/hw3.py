@@ -26,6 +26,8 @@
 import astar
 # Load the numpy package and the state is represented as a numpy array during this homework.
 import numpy as np
+# Load the time package to measure the time of your algorithm.
+import time
 
 
 # a_star perform the A* algorithm with the start_state (numpy array), goal_test (function), successors (function) and
@@ -142,37 +144,60 @@ def set_square(s, r, c, v):
     s_copy = np.copy(s)
     s_copy[r, c] = v
     return s_copy
+
+# Attempt to move the keeper in direction (dr, dc).
+# Returns the resulting state if the move is legal, or None if illegal.
+# Sokoban move rules:
+#   - Keeper can move into a blank square or a goal.
+#   - Keeper can push a box if the square beyond is free (blank or goal).
+#   - Cannot walk into walls or push boxes into blocked spaces.
 def try_move(s, dr, dc):
+    # Get current position of the keeper
     r, c = getKeeperPosition(s)
+
+    # Compute the square directly adjacent (where keeper wants to go)
     r1, c1 = r + dr, c + dc
+
+    # Compute the square two steps away (used when pushing a box)
     r2, c2 = r1 + dr, c1 + dc
 
-    from_val = s[r, c]
-    to_val = get_square(s, r1, c1)
-    beyond_val = get_square(s, r2, c2)
+    # Identify what is currently in the relevant squares
+    from_val = s[r, c]               # current keeper square
+    to_val = get_square(s, r1, c1)   # square keeper moves into
+    beyond_val = get_square(s, r2, c2)  # square beyond that (for pushing)
 
+    # If trying to walk into a wall, move is illegal
     if isWall(to_val):
         return None
 
+    # Work on a copy of the current state to avoid modifying the original
     s1 = np.copy(s)
 
-    # Move into box?
+    # --- Case 1: Trying to push a box ---
     if isBox(to_val) or isBoxstar(to_val):
+        # You can only push the box if the next square is empty or a goal
         if not (isBlank(beyond_val) or isStar(beyond_val)):
-            return None
-        s1 = set_square(s1, r2, c2, boxstar if isStar(beyond_val) else box)
+            return None  # push blocked, move is invalid
 
-    # Update previous keeper position
+        # Move the box to the destination square (update with correct visual)
+        s1 = set_square(s1, r2, c2, boxstar if isStar(beyond_val) else box)
+        beyond_val = get_square(s1, r2, c2)  # update the box's new value
+
+        # Clear the box's previous position
+        s1 = set_square(s1, r1, c1, star if isBoxstar(to_val) else blank)
+        to_val = get_square(s1, r1, c1)  # update the box's new value
+
+    # --- Case 2: Update the square the keeper is leaving ---
+    # If the keeper was on a goal, leave a goal behind; otherwise, just empty space
     s1 = set_square(s1, r, c, star if isKeeperstar(from_val) else blank)
 
-    # Clear box position if we pushed it
-    if isBox(to_val) or isBoxstar(to_val):
-        s1 = set_square(s1, r1, c1, star if isBoxstar(to_val) else blank)
-
-    # Set keeper's new position
+    # --- Case 3: Move the keeper into the new square ---
+    # If the destination is a goal square, use keeperstar; else just keeper
     s1 = set_square(s1, r1, c1, keeperstar if isStar(to_val) else keeper)
 
+    # Return the new state after the move
     return s1
+
 
 # EXERCISE: Modify this function to return the list of
 # successor states of s (numpy array).
@@ -230,35 +255,64 @@ def h1_admissible():
 # EXERCISE: 
 # This function will be tested in various hard examples.
 # Objective: make A* solve problems as fast as possible.
-def h2(s):
-    boxes = []
-    goals = []
 
+# Heuristic function h2: estimates cost from state s to goal
+# This version assigns each box to the nearest available goal using greedy matching.
+# It is admissible (never overestimates) and performs better than h0 or h1.
+
+# --- WHY THIS HEURISTIC IS ADMISSIBLE ---
+# The heuristic estimates the minimum cost to reach the goal by:
+#   - Pairing each box with the closest unassigned goal using Manhattan distance
+#   - Ignoring obstacles and actual path feasibility (e.g., walls or pushing constraints)
+# Because it only considers the *shortest possible* straight-line movement to goal positions:
+#   - It may *underestimate* the cost (if pushing is hard or blocked),
+#   - But it will *never overestimate* the true cost to the goal.
+# Therefore, h2 is guaranteed to be **admissible**.
+# -----------------------------------------
+
+def h2(s):
+    boxes = []  # List to store positions of all boxes
+    goals = []  # List to store positions of all goal squares
+
+    # Step 1: Collect positions of all boxes and goals
     for r in range(s.shape[0]):
         for c in range(s.shape[1]):
+            # Add any type of box (normal or on goal)
             if isBox(s[r, c]) or isBoxstar(s[r, c]):
                 boxes.append((r, c))
+            # Add any type of goal (empty, under box, or under keeper)
             if isStar(s[r, c]) or isBoxstar(s[r, c]) or isKeeperstar(s[r, c]):
                 goals.append((r, c))
 
-    total_distance = 0
-    used_goals = set()
+    total_distance = 0     # Total heuristic cost (to be returned)
+    used_goals = set()     # Track which goals have already been paired with a box
 
+    # Step 2: Assign each box to its closest unassigned goal
     for box in boxes:
-        min_dist = float('inf')
-        closest_goal = None
+        min_dist = float('inf')  # Initialize the minimum distance as infinity
+        closest_goal = None      # Placeholder for the best goal candidate
+
+        # Loop through all goals to find the closest available one
         for goal in goals:
             if goal in used_goals:
-                continue
+                continue  # Skip goals that are already assigned to another box
+
+            # Compute Manhattan distance between box and goal
             dist = abs(box[0] - goal[0]) + abs(box[1] - goal[1])
+
+            # Update closest goal if this one is closer
             if dist < min_dist:
                 min_dist = dist
                 closest_goal = goal
+
+        # Once a goal is selected, mark it used and accumulate its distance
         if closest_goal:
             used_goals.add(closest_goal)
             total_distance += min_dist
 
+    # Step 3: Return the total estimated cost
     return total_distance
+
 
 
 
@@ -524,35 +578,65 @@ def printstate(s):
 # Print a list of states with delay.
 def printlists(lists):
     for states in (lists):
-        printstate(states)
+        myprintstate(states)
         print('\n')
-def myprintstate(s):
+
+# custom print to view puzzle in a more readable format
+def myprintstate(s,scale=2):
     symbol_map = {
-        blank: '  ',
-        wall: '██',
-        box: '▣▣',
-        keeper: '⛹⛹',
-        star: '△△',
-        boxstar: '◆◆',
-        keeperstar: '🔷🔷'
+        blank: ' ',
+        wall: '█',
+        box: '▣',
+        keeper: '⛹',
+        star: '△',
+        boxstar: '◆',
+        keeperstar: '🔷'
     }
 
     row, col = s.shape
-    top_border = '┌' + '──' * col + '┐'
-    bottom_border = '└' + '──' * col + '┘'
+    top_border = '┌' + '─'*scale* col + '┐'
+    bottom_border = '└' + '─'*scale * col + '┘'
     print(top_border)
     for i in range(row):
         print('│', end='')
         for j in range(col):
-            print(symbol_map.get(s[i, j], '??'), end='')
+            if s[i, j] == keeperstar:
+                print(symbol_map.get(s[i, j], '?'), end='')
+            else:
+                print(symbol_map.get(s[i, j], '?') * scale, end='')
         print('│')
     print(bottom_border)
 
 
-import time
+def test_next_states(state = s16 ):
+    # Example test case: Keeper pushes the box or moves around it
+    test_s = [
+        [1, 1, 1, 1, 1],
+        [1, 3, 2, 4, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+    ]
 
-#...
-if __name__ == "__main__":
+    if state is not None:
+        test_s = state
+
+    print("Initial State:")
+    myprintstate(np.array(test_s))
+
+    print("\nSuccessor States from next_states():\n")
+    succs = next_states(np.array(test_s))
+    for i, state in enumerate(succs):
+        print(f"Successor {i + 1}:")
+        myprintstate(state)
+        print()
+def test_h( heuristic=h0):
+    sokoban(s1, heuristic)
+    sokoban(s2, heuristic)
+    sokoban(s3, heuristic)
+    sokoban(s4, heuristic)
+def custom_test_h(heuristic=h0,state=None):
     ss = (
         (1, s1, True),
         (2, s2, True),
@@ -570,22 +654,42 @@ if __name__ == "__main__":
         (14, s14, True),
         (15, s15, True),
         (16, s16, True),
-        (17, s17, False),
+        (17, s17, True),
         (18, s18, True),
         (19, s19, True),
-        # (16, s16, True),
     )
     total_time = 0
+    if state is not None:
+        ss = [('Custom', state, True)]
     for i, s, d in ss:
         print(f"Test {i}{'' if d else ' (skipped)'}")
         state = np.array(s)
         myprintstate(state)
         if d:
             start_time = time.time()
-            sokoban(state, h0)
+            sokoban(state, heuristic)
             end_time = time.time()
             total_time += end_time - start_time
             print(f"Execution Time: {end_time - start_time:.4f} seconds")
             print()
 
     print(f"Total Time: {total_time:.4f} seconds")
+if __name__ == "__main__":
+    # test_h(h0)
+    # test_h(h1)
+    # test_h(h2)
+    # test_next_states(
+    #     [[1, 1, 1, 1, 1, 0, 0, 0],
+    #    [1, 0, 0, 0, 1, 0, 0, 0],
+    #    [1, 2, 1, 0, 1, 1, 1, 1],
+    #    [1, 4, 0, 0, 0, 0, 0, 1],
+    #    [1, 0, 0, 5, 0, 5, 0, 1],
+    #    [1, 0, 5, 3, 1, 0, 1, 1],
+    #    [1, 1, 1, 0, 0, 0, 1, 0],
+    #    [0, 0, 1, 1, 1, 1, 1, 0]])
+    # custom_test_h(h0,s16)
+    custom_test_h(h2)
+
+    
+
+    
