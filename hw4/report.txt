@@ -1,0 +1,141 @@
+
+### Question 1:
+
+This SAT instance is UNSATISFIABLE
+
+#### RSAT Terminal Output:
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph1_3.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (21 vars, 64 clauses)
+c Decisions: 11
+c Conflicts: 11
+c Running time: 0.00700 seconds
+
+### Question 2:
+
+This SAT instance is SATISFIABLE
+
+#### RSAT Terminal Output:
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph1_4.cnf -s
+c Rsat version 2.01
+v -1 -28 -27 -26 25 -21 -9 -5 -24 -23 22 -18 -2 -14 -20 -19 17 -13 -16 15 -11 -12 10 -6 -8 7 -3 4 0
+c
+c
+s SATISFIABLE
+c CNF stats: (28 vars, 97 clauses)
+c Decisions: 11
+c Conflicts: 0
+c Running time: 0.00100 seconds
+
+### Question 3:
+
+Since the instance is unsatisfiable with 3 colors, the graph cannot be colored properly with only 3 colors.
+
+Since it is satisfiable with 4 colors, the graph can be colored properly with 4 colors.
+
+Color 1 (ex. Red) -> Node 7
+Color 2 (Blue) -> Nodes 3 and 6
+Color 3 (Green) -> Nodes 2 and 4
+Color 4 (Yellow) -> Node 1
+
+### Question 4:
+Minimum number of colors is 8.
+
+
+#### RSAT Terminal Output:
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_1.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (50 vars, 555 clauses)
+c Decisions: 0
+c Conflicts: 0
+c Running time: 0.00300 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_2.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (100 vars, 1210 clauses)
+c Decisions: 1
+c Conflicts: 2
+c Running time: 0.01300 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_3.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (150 vars, 1865 clauses)
+c Decisions: 10
+c Conflicts: 8
+c Running time: 0.00800 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_3.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (150 vars, 1865 clauses)
+c Decisions: 10
+c Conflicts: 8
+c Running time: 0.00200 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_4.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (200 vars, 2570 clauses)
+c Decisions: 54
+c Conflicts: 44
+c Running time: 0.01200 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_5.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (250 vars, 3325 clauses)
+c Decisions: 607
+c Conflicts: 518
+c Running time: 0.01100 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_6.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (300 vars, 4130 clauses)
+c Decisions: 470
+c Conflicts: 415
+c Running time: 0.01100 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_7.cnf -s
+c Rsat version 2.01
+c
+c
+s UNSATISFIABLE
+c CNF stats: (350 vars, 4985 clauses)
+c Decisions: 4380
+c Conflicts: 3888
+c Running time: 0.05100 seconds
+
+C:\Users\paulk\Desktop\Cs161\hw4>"./rsat_2.01_win" graph2_8.cnf -s
+c Rsat version 2.01
+v -212 -211 -209 -210 -156 -155 -153 -154 -299 -297 -301 -214 -244 -243 -241 -242 -92 -90 -89 -140 -137 -324 -323 -321 -157 -68 -67 -65 -260 -258 -257 -108 -107 -106 -105 -188 -186 -185 -213 -298 -245 -322 -52 -51 -49 -50 -189 -94 300 -302 -303 -304 -20 -28 -36 -44 -100 -124 -132 -196 -204 -236 -252 -268 -308 -364 -380 -141 -138 -325 -158 -239 -55 -56 -93 261 -259 -262 -263 -264 -45 -69 -109 -117 -125 -133 -165 -173 -205 -221 -253 -309 -357 -381 -389 -397 110 53 66 -54 -21 -61 -197 -229 -237 -269 -277 -285 -293 -317 -365 -373 -70 -71 -72 -2 -18 -34 -42 -58 -98 -122 -130 -170 -194 -202 -234 -266 -282 -306 -354 -362 -394 -111 -112 -22 -46 -62 -126 -182 -190 -286 -294 -310 -326 -358 -366 -374 -390 -398 142 -139 -143 -144 -6 -78 -86 -118 -134 -150 -174 -206 -222 -246 -254 -270 -334 -350 -382 91 -95 -96 -3 -19 -115 -123 -131 -147 -163 -171 -179 -203 -219 -283 -307 -355 -387 -395 -97 -99 -215 216 -8 -64 -128 -152 -160 -168 -192 -208 -240 -256 -272 -288 -296 -328 -336 -360 -368 -376 -384 -392 159 -7 -103 -135 -191 -199 -231 -247 -255 -287 -295 -319 -335 -359 -367 -375 -383 -391 327 -23 -47 -311 -343 -399 187 -59 -331 248 -32 -40 -80 -104 -280 -352 -233 -235 238 101 -102 -5 -29 -37 -77 -85 -149 -341 -349 -14 -38 -198 -230 -278 -318 -267 -265 -79 271 -87 -129 136 -48 -176 -312 -400 305 -17 -33 -41 -121 -161 -169 -201 -249 -289 -369 -377 -393 43 -11 -27 -35 -275 -291 -339 -371 -379 127 207 -119 -151 -175 -223 -15 -183 172 396 -4 -12 -84 -148 -164 -180 -340 -348 1 -81 -113 -177 -193 -217 -225 -281 -313 -329 -345 -353 284 -60 -76 -332 -388 378 -26 -226 -314 -346 -386 356 -372 370 -74 -274 -292 290 39 24 -16 -344 385 -57 -361 363 63 -75 -83 -195 -227 -315 -347 73 -9 -25 -273 200 -120 -224 351 -250 251 -228 232 -184 -316 320 -30 31 -330 333 -181 178 -10 -82 -114 -162 -218 -338 13 220 -276 116 279 -167 88 166 -342 337 -145 146 0
+c
+c
+s SATISFIABLE
+c CNF stats: (400 vars, 5890 clauses)
+c Decisions: 824
+c Conflicts: 529
+c Running time: 0.03500 seconds
